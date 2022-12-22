@@ -21,4 +21,9 @@ public class MinusOperator implements BinaryOperator {
         }
         throw new IncompatibleException(String.format("Could not subtract %s and %s", lhs.toString(), rhs.toString()));
     }
+
+    @Override
+    public String toString() {
+        return "MinusOperator";
+    }
 }

@@ -26,4 +26,9 @@ public class AddOperator implements BinaryOperator {
         }
         throw new IncompatibleException(String.format("Could not add %s and %s", lhs.toString(), rhs.toString()));
     }
+
+    @Override
+    public String toString() {
+        return "AddOperator";
+    }
 }

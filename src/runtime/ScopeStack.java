@@ -5,10 +5,10 @@ import java.util.Stack;
 
 public class ScopeStack {
     private static final Stack<Scope> stack = new Stack<>();
-    private static void push(Scope scope) {
+    public static void push(Scope scope) {
         stack.push(scope);
     }
-    private static Scope peek() {
+    public static Scope peek() {
         return stack.peek();
     }
 }

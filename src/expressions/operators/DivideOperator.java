@@ -29,4 +29,9 @@ public class DivideOperator implements BinaryOperator {
         }
         throw new IncompatibleException(String.format("Could not multiply %s and %s", lhs.toString(), rhs.toString()));
     }
+
+    @Override
+    public String toString() {
+        return "DivideOperator";
+    }
 }

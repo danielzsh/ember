@@ -5,10 +5,10 @@ public enum TokenType {
     Keyword("(input|print|for|in)"),
     GroupDivider("(\\[|\\])"),
     Logical("true|false"),
-    Numeric("[0-9]+"),
+    Numeric("[0-9]*\\.?[0-9]+"),
     Text("\"([^\"]*)\""),
     Variable("[a-zA-Z_]+[a-zA-Z0-9_]*"),
-    Operator("(\\+|\\-|\\>|\\<|\\={1,2}|\\!|\\:{2})"); // +, -, >, <, =, ==, !, ::
+    Operator("(\\+|\\-|\\*|\\/|\\>|\\<|\\={1,2}|\\!|\\:{2})"); // +, -, >, <, =, ==, !, ::
     private final String regex;
     TokenType(String regex) {
         this.regex = regex;

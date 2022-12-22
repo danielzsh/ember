@@ -1,10 +1,12 @@
 import expressions.BinaryExpression;
 import expressions.BinaryOperator;
 import expressions.Expression;
+import expressions.VarExpression;
 import expressions.operators.AddOperator;
 import expressions.operators.DivideOperator;
 import expressions.operators.MinusOperator;
 import expressions.operators.TimesOperator;
+import statements.InputStatement;
 import statements.PrintStatement;
 import statements.Statement;
 import tokens.Token;
@@ -13,6 +15,9 @@ import tokens.UnexpectedTokenException;
 import values.NumericValue;
 import values.StringValue;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.*;
 
 public class Parser {
@@ -34,6 +39,9 @@ public class Parser {
     public Parser(String src) {
         Lexer lexer = new Lexer(src);
         tokens = lexer.lex();
+        for (Token token : tokens) {
+            System.out.println(token);
+        } // TODO: remove
         statements = new ArrayList<>();
     }
     private void skipWhitespace() {
@@ -42,10 +50,12 @@ public class Parser {
         }
     }
     private Token curToken() {
+        assert position < tokens.size() : "position was out of bounds";
         return tokens.get(position);
     }
     public void parse() {
         while (position < tokens.size()) {
+            skipWhitespace();
             parseNextStatement();
         }
     }
@@ -55,17 +65,35 @@ public class Parser {
             if (firstToken.value().equals("print")) {
                 parsePrintStatement();
             }
+            else if (firstToken.value().equals("input")) {
+                parseInputStatement();
+            }
         }
     }
+
+    /**
+     * Parses print statement and advances position to end of print statement
+     */
     private void parsePrintStatement() {
-        if (!curToken().value().equals("print")) {
-            throw new UnexpectedTokenException("Expected literal print in call to parsePrintStatement");
-        }
+        assert curToken().value().equals("print") : "Expected literal print in call to parsePrintStatement";
         position++;
         skipWhitespace();
         statements.add(new PrintStatement(parseExpression(0)));
     }
 
+    /**
+     * Parses input statement and advances position to end of input statement
+     */
+    private void parseInputStatement() {
+        assert curToken().value().equals("input") : "Expected literal input in call to parseInputStatement";
+        position++;
+        skipWhitespace();
+        if (curToken().type() != TokenType.Variable) {
+            throw new UnexpectedTokenException(String.format("Expected variable token in input statement, got %s instead", curToken().value()));
+        }
+        statements.add(new InputStatement(curToken().value()));
+        position++;
+    }
     /**
      * parses expression and leaves position 1 token after end of expression.
      * @param level used to maintain order of operations
@@ -76,18 +104,31 @@ public class Parser {
             if (curToken().type() == TokenType.Numeric) {
                 return new NumericValue(tokens.get(position++).value());
             }
-            else if (tokens.get(position).type() == TokenType.Text) {
+            else if (curToken().type() == TokenType.Text) {
                 return new StringValue(tokens.get(position++).value());
             }
+            else if (curToken().type() == TokenType.Variable) {
+                return new VarExpression(tokens.get(position++).value());
+            }
+            else throw new UnexpectedTokenException(String.format("Did not expect %s when parsing level %d expression", curToken().value(), level));
         }
-        Expression lhs = parseExpression(level - 1);
+        Expression lhs = parseExpression(level + 1);
         skipWhitespace();
-        while (Arrays.asList(operations[level]).contains(curToken().value())) { // check if current level of operations contains operation
+        while (position < tokens.size() && Arrays.asList(operations[level]).contains(curToken().value())) { // check if current level of operations contains operation
             String operator = curToken().value();
             position++;
             skipWhitespace();
             lhs = new BinaryExpression(lhs, parseExpression(level), operatorToClass.get(operator));
+            skipWhitespace();
         }
         return lhs;
+    }
+    public static void main(String[] args) throws IOException {
+        String src = Files.readString(Paths.get("C:\\Users\\leifa\\IdeaProjects\\ember\\src\\sample.txt"));
+        Parser parser = new Parser(src);
+        parser.parse();
+        for (Statement statement : parser.statements) {
+            System.out.println(statement);
+        }
     }
 }

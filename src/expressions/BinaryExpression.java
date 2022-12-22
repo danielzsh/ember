@@ -14,4 +14,13 @@ public class BinaryExpression implements Expression {
     public Value<?> evaluate() {
         return operator.evaluate(lhs.evaluate(), rhs.evaluate());
     }
+
+    @Override
+    public String toString() {
+        return "BinaryExpression{" +
+                "lhs=" + lhs +
+                ", rhs=" + rhs +
+                ", operator=" + operator +
+                '}';
+    }
 }

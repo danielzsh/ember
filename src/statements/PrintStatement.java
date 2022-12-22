@@ -13,4 +13,11 @@ public class PrintStatement implements Statement {
     public void execute() {
         System.out.println(expression.evaluate());
     }
+
+    @Override
+    public String toString() {
+        return "PrintStatement{" +
+                "expression=" + expression +
+                '}';
+    }
 }
