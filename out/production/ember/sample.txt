@@ -1,2 +1,2 @@
 input num
-print num + 1
+print "num is: " + num

@@ -29,7 +29,7 @@ public class InputStatement implements Statement {
             ScopeStack.peek().put(varName, new StringValue(input));
             // System.out.println("text"); TODO: remove
         }
-        System.out.println(input);
+        // System.out.println(input);
     }
     public static void main(String[] args) { // main function to test input functionality
         InputStatement inputStatement = new InputStatement("test");

@@ -39,9 +39,6 @@ public class Parser {
     public Parser(String src) {
         Lexer lexer = new Lexer(src);
         tokens = lexer.lex();
-        for (Token token : tokens) {
-            System.out.println(token);
-        } // TODO: remove
         statements = new ArrayList<>();
     }
     private void skipWhitespace() {
@@ -53,11 +50,12 @@ public class Parser {
         assert position < tokens.size() : "position was out of bounds";
         return tokens.get(position);
     }
-    public void parse() {
+    public List<Statement> parse() {
         while (position < tokens.size()) {
             skipWhitespace();
             parseNextStatement();
         }
+        return statements;
     }
     private void parseNextStatement() {
         Token firstToken = curToken();
@@ -126,6 +124,10 @@ public class Parser {
     public static void main(String[] args) throws IOException {
         String src = Files.readString(Paths.get("C:\\Users\\leifa\\IdeaProjects\\ember\\src\\sample.txt"));
         Parser parser = new Parser(src);
+        List<Token> tokens = parser.tokens;
+        for (Token token : tokens) {
+            System.out.println(token);
+        } // TODO: remove
         parser.parse();
         for (Statement statement : parser.statements) {
             System.out.println(statement);
