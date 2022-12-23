@@ -10,4 +10,10 @@ public class NumericValue extends Value<Double> {
     public NumericValue(int value) {
         super((double) value);
     }
+
+    @Override
+    public String toString() {
+        if (getValue() % 1 < 1e-9) return Integer.toString(getValue().intValue()); // TODO: fix error where integers are displayed as decimals
+        else return getValue().toString();
+    }
 }

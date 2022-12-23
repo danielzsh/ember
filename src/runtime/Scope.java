@@ -25,4 +25,5 @@ public class Scope {
     public Value<?> get(String varName) {
         return variables.get(varName);
     }
+
 }

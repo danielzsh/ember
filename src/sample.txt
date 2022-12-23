@@ -1,2 +1,4 @@
 input num
 print "num is: " + num
+num2 = num + 1
+print "num2 is: " + num2

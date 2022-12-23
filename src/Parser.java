@@ -6,6 +6,7 @@ import expressions.operators.AddOperator;
 import expressions.operators.DivideOperator;
 import expressions.operators.MinusOperator;
 import expressions.operators.TimesOperator;
+import statements.AssignStatement;
 import statements.InputStatement;
 import statements.PrintStatement;
 import statements.Statement;
@@ -47,7 +48,6 @@ public class Parser {
         }
     }
     private Token curToken() {
-        assert position < tokens.size() : "position was out of bounds";
         return tokens.get(position);
     }
     public List<Statement> parse() {
@@ -67,13 +67,15 @@ public class Parser {
                 parseInputStatement();
             }
         }
+        else if (firstToken.type() == TokenType.Variable) {
+            parseAssignStatement();
+        }
     }
 
     /**
      * Parses print statement and advances position to end of print statement
      */
     private void parsePrintStatement() {
-        assert curToken().value().equals("print") : "Expected literal print in call to parsePrintStatement";
         position++;
         skipWhitespace();
         statements.add(new PrintStatement(parseExpression(0)));
@@ -83,7 +85,6 @@ public class Parser {
      * Parses input statement and advances position to end of input statement
      */
     private void parseInputStatement() {
-        assert curToken().value().equals("input") : "Expected literal input in call to parseInputStatement";
         position++;
         skipWhitespace();
         if (curToken().type() != TokenType.Variable) {
@@ -91,6 +92,17 @@ public class Parser {
         }
         statements.add(new InputStatement(curToken().value()));
         position++;
+    }
+    private void parseAssignStatement() {
+        String varName = curToken().value();
+        position++;
+        skipWhitespace();
+        if (!curToken().value().equals("=")) {
+            throw new UnexpectedTokenException(String.format("Expected =, got %s", curToken().value()));
+        }
+        position++;
+        skipWhitespace();
+        statements.add(new AssignStatement(varName, parseExpression(0)));
     }
     /**
      * parses expression and leaves position 1 token after end of expression.
